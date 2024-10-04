@@ -20,16 +20,16 @@ const db = getFirestore(app) // Initialize Firestore
 // Função para armazenar dados no Firestore
 export async function saveData(link, interest) {
   try {
-    const docRef = await addDoc(collection(db, 'qrcodes'), {
+    const docRef = await addDoc(collection(db, "qrcodes"), {
       link: link,
       interest: interest,
       timestamp: new Date()
-    })
-    console.log('Dados salvos com sucesso no Firestore com ID: ', docRef.id)
-    return docRef.id
+    });
+    console.log("Dados salvos com sucesso no Firestore com ID: ", docRef.id);
+    return docRef.id;
   } catch (error) {
-    console.error('Erro ao salvar dados no Firestore: ', error)
-    throw error // Propaga o erro para ser tratado pelo chamador
+    console.error("Erro ao salvar dados no Firestore: ", error);
+    throw error;
   }
 }
 

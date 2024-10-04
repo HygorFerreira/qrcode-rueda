@@ -21,7 +21,6 @@ function App() {
   // Função para enviar log para o Firebase
   const sendLogToServer = async logData => {
     try {
-      // Adiciona o log na coleção 'logs' do Firestore
       await saveData(logData.data, logData.interest);
       console.log('Log salvo no Firebase com sucesso!');
     } catch (error) {
