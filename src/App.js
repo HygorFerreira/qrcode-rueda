@@ -2,7 +2,9 @@ import React, { useState, useCallback } from 'react'
 import QrScanner from 'react-qr-scanner'
 import Papa from 'papaparse'
 import LogonLogo from '../src/LogonLogo.png'
-import { FaCamera } from 'react-icons/fa'; // Ícone de câmera
+import { FaCamera } from 'react-icons/fa' // Ícone de câmera
+import { collection, addDoc } from 'firebase/firestore'
+import { db } from './firebase' // Importar a configuração do Firebase
 
 function App() {
   const [qrData, setQrData] = useState([])
@@ -16,22 +18,19 @@ function App() {
     setIsFrontCamera(prevState => !prevState)
   }
 
-  // Função para enviar log para o servidor
-  const sendLogToServer = logData => {
-    fetch('https://qrcode-rueda.vercel.app/save-log', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(logData)
-    })
-      .then(response => response.text())
-      .then(data => {
-        console.log(data) // Exibe a resposta do servidor
+  // Função para enviar log para o Firebase
+  const sendLogToServer = async logData => {
+    try {
+      // Adiciona o log na coleção 'logs' do Firestore
+      await addDoc(collection(db, 'logs'), {
+        data: logData.data,
+        timestamp: logData.timestamp,
+        interest: logData.interest
       })
-      .catch(error => {
-        console.error('Erro ao enviar o log para o servidor:', error)
-      })
+      console.log('Log salvo no Firebase com sucesso!')
+    } catch (error) {
+      console.error('Erro ao salvar o log no Firebase:', error)
+    }
   }
 
   // Função de escaneamento para capturar o QR code
@@ -61,7 +60,7 @@ function App() {
           setShowModal(false)
         }, 3000)
 
-        // Enviar log para o servidor
+        // Enviar log para o servidor (Firebase)
         sendLogToServer(newQrData)
       }
     },
@@ -92,11 +91,11 @@ function App() {
   // Configurações de câmera
   const previewStyle = {
     height: 240,
-    width: 320,
+    width: 320
   }
 
   const cameraConstraints = {
-    facingMode: isFrontCamera ? 'user' : 'environment', // Troca entre câmera frontal e traseira
+    facingMode: isFrontCamera ? 'user' : 'environment' // Troca entre câmera frontal e traseira
   }
 
   return (
