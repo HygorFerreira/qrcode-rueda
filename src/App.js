@@ -1,91 +1,91 @@
-import React, { useState, useCallback } from 'react';
-import QrScanner from 'react-qr-scanner';
-import Papa from 'papaparse';
-import LogonLogo from '../src/LogonLogo.png';
+import React, { useState, useCallback } from 'react'
+import QrScanner from 'react-qr-scanner'
+import Papa from 'papaparse'
+import LogonLogo from '../src/LogonLogo.png'
 
 function App() {
-  const [qrData, setQrData] = useState([]);
-  const [selectedInterest, setSelectedInterest] = useState('Painel BI');
-  const [showModal, setShowModal] = useState(false);
-  const [lastScan, setLastScan] = useState(null);
+  const [qrData, setQrData] = useState([])
+  const [selectedInterest, setSelectedInterest] = useState('Painel BI')
+  const [showModal, setShowModal] = useState(false)
+  const [lastScan, setLastScan] = useState(null)
 
   // Função para enviar log para o servidor
-  const sendLogToServer = (logData) => {
+  const sendLogToServer = logData => {
     fetch('https://qrcode-rueda.vercel.app/save-log', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify(logData),
+      body: JSON.stringify(logData)
     })
-      .then((response) => {
+      .then(response => {
         if (!response.ok) {
-          throw new Error('Erro na resposta do servidor');
+          throw new Error('Erro na resposta do servidor')
         }
-        return response.text();
+        return response.text()
       })
-      .then((data) => {
-        console.log('Log enviado:', data); // Exibe a resposta do servidor
+      .then(data => {
+        console.log('Log enviado:', data) // Exibe a resposta do servidor
       })
-      .catch((error) => {
-        console.error('Erro ao enviar o log para o servidor:', error);
-      });
-  };
+      .catch(error => {
+        console.error('Erro ao enviar o log para o servidor:', error)
+      })
+  }
 
   // Função de escaneamento para capturar o QR code
   const handleScan = useCallback(
-    (result) => {
+    result => {
       if (result && result.text) {
-        const scannedText = result.text;
+        const scannedText = result.text
 
         // Evita leituras repetidas dentro de 3 segundos
-        if (lastScan && new Date() - lastScan < 3000) return;
+        if (lastScan && new Date() - lastScan < 3000) return
 
-        setLastScan(new Date());
+        setLastScan(new Date())
 
         const newQrData = {
           data: scannedText,
           timestamp: new Date().toISOString(),
-          interest: selectedInterest,
-        };
+          interest: selectedInterest
+        }
 
-        setQrData((prevData) => [...prevData, newQrData]);
+        setQrData(prevData => [...prevData, newQrData])
 
         // Exibir modal
-        setShowModal(true);
+        setShowModal(true)
 
         // Fecha o modal automaticamente após 3 segundos
         setTimeout(() => {
-          setShowModal(false);
-        }, 3000);
+          setShowModal(false)
+        }, 3000)
 
         // Enviar log para o servidor
-        sendLogToServer(newQrData);
+        sendLogToServer(newQrData)
       }
     },
     [selectedInterest, lastScan]
-  );
+  )
 
-  const handleError = (err) => {
-    console.error(err);
-  };
+  const handleError = err => {
+    console.error(err)
+  }
 
-  const handleInterestChange = (event) => {
-    setSelectedInterest(event.target.value);
-  };
+  const handleInterestChange = event => {
+    setSelectedInterest(event.target.value)
+  }
 
   // Função para download CSV
   const downloadCSV = () => {
-    const csv = Papa.unparse(qrData);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'qr_codes.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+    const csv = Papa.unparse(qrData)
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.setAttribute('href', url)
+    link.setAttribute('download', 'qr_codes.csv')
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
 
   return (
     <div className="app-container">
@@ -94,7 +94,11 @@ function App() {
       </div>
 
       <div className="dropdown-container">
-        <select value={selectedInterest} onChange={handleInterestChange} className="dropdown">
+        <select
+          value={selectedInterest}
+          onChange={handleInterestChange}
+          className="dropdown"
+        >
           <option value="Painel BI">Painel BI</option>
           <option value="Automação">Automação</option>
           <option value="Outros">Outros</option>
@@ -151,7 +155,7 @@ function App() {
 
         .qr-scanner-container {
           width: 100%;
-          max-width: 500px;
+          max-width: 300px;
           margin-bottom: 20px;
         }
 
@@ -218,7 +222,7 @@ function App() {
         }
       `}</style>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
