@@ -89,6 +89,16 @@ function App() {
     document.body.removeChild(link)
   }
 
+  // Configurações de câmera
+  const previewStyle = {
+    height: 240,
+    width: 320,
+  }
+
+  const cameraConstraints = {
+    facingMode: isFrontCamera ? 'user' : 'environment', // Troca entre câmera frontal e traseira
+  }
+
   return (
     <div className="app-container">
       <div className="logo-container">
@@ -112,14 +122,10 @@ function App() {
           delay={300}
           onError={handleError}
           onScan={handleScan}
-          facingMode={isFrontCamera ? 'user' : 'environment'} // Alternar entre câmeras
-          className="qr-scanner"
+          style={previewStyle} // Estilo para o componente de scanner
+          constraints={{ video: cameraConstraints }} // Definir modo de câmera
         />
       </div>
-
-      <button className="camera-toggle" onClick={toggleCamera}>
-        <FaCamera size={24} />
-      </button>
 
       {showModal && (
         <div className="modal">
@@ -128,6 +134,12 @@ function App() {
           </div>
         </div>
       )}
+
+      <div className="controls-container">
+        <button className="camera-toggle" onClick={toggleCamera}>
+          <FaCamera size={24} />
+        </button>
+      </div>
 
       <button className="download-btn" onClick={downloadCSV}>
         Download CSV
@@ -166,8 +178,20 @@ function App() {
           margin-bottom: 20px;
         }
 
-        .qr-scanner {
+        .controls-container {
+          position: relative;
           width: 100%;
+          display: flex;
+          justify-content: center;
+          padding-left: 200px;
+          margin: -20px;
+        }
+
+        .camera-toggle {
+          background: none;
+          border: none;
+          cursor: pointer;
+          color: white;
         }
 
         .modal {
@@ -196,16 +220,6 @@ function App() {
           color: #fff;
           border-radius: 5px;
           border: none;
-        }
-
-        .camera-toggle {
-          position: absolute;
-          top: 20px; /* Ajuste conforme necessário */
-          right: 20px; /* Ajuste conforme necessário */
-          background: none;
-          border: none;
-          cursor: pointer;
-          color: white;
         }
 
         @media (max-width: 768px) {
