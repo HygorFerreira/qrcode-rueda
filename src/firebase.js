@@ -1,4 +1,4 @@
-// Import the functions you need from the SDKs you need
+// firebase.js
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, addDoc } from "firebase/firestore"; // Import Firestore functions
 import { getAnalytics } from "firebase/analytics";
@@ -20,7 +20,7 @@ const analytics = getAnalytics(app);
 const db = getFirestore(app); // Initialize Firestore
 
 // Função para armazenar dados no Firestore
-async function saveData(link, interest) {
+export async function saveData(link, interest) {
   try {
     await addDoc(collection(db, "qrcodes"), {
       link: link,
@@ -32,31 +32,3 @@ async function saveData(link, interest) {
     console.error("Erro ao salvar dados no Firestore: ", error);
   }
 }
-
-// Função para lidar com a leitura do QR Code
-function handleQRCodeRead(data) {
-  const interest = document.getElementById("interestDropdown").value; // Obtém o valor selecionado
-  saveData(data, interest); // Salva o link e o interesse no Firestore
-  alert('Dados salvos com sucesso!'); // Alerta de sucesso
-}
-
-// Adicionando a leitura do QR Code e usando um canvas otimizado
-const canvas = document.createElement('canvas');
-const ctx = canvas.getContext('2d', { willReadFrequently: true });
-
-// Código para iniciar a leitura do QR Code
-const scanner = new QrScanner(videoElement, handleQRCodeRead);
-scanner.start();
-
-// HTML para o dropdown de interesses
-document.body.innerHTML += `
-  <select id="interestDropdown">
-    <option value="interesse1">Interesse 1</option>
-    <option value="interesse2">Interesse 2</option>
-    <option value="interesse3">Interesse 3</option>
-  </select>
-  <video id="videoElement"></video>
-`;
-
-// Inicia o scanner
-QrScanner.WORKER_PATH = 'path/to/qr-scanner-worker.min.js'; // Altere para o caminho do seu worker
