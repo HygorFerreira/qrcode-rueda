@@ -4,7 +4,7 @@ import Papa from 'papaparse'
 import LogonLogo from '../src/LogonLogo.png'
 import { FaCamera } from 'react-icons/fa' // Ícone de câmera
 import { collection, addDoc } from 'firebase/firestore'
-import { db } from './firebase' // Importar a configuração do Firebase
+import { db } from './firebase' // ajuste o caminho conforme necessário
 
 function App() {
   const [qrData, setQrData] = useState([])
