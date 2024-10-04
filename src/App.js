@@ -1,13 +1,14 @@
-import React, { useState, useCallback } from 'react'
-import QrScanner from 'react-qr-scanner'
-import Papa from 'papaparse'
-import LogonLogo from '../src/LogonLogo.png'
+import React, { useState, useCallback } from 'react';
+import QrScanner from 'react-qr-scanner';
+import Papa from 'papaparse';
+import LogonLogo from '../src/LogonLogo.png';
 
 function App() {
-  const [qrData, setQrData] = useState([])
-  const [selectedInterest, setSelectedInterest] = useState('Painel BI')
-  const [showModal, setShowModal] = useState(false)
-  const [lastScan, setLastScan] = useState(null)
+  const [qrData, setQrData] = useState([]);
+  const [selectedInterest, setSelectedInterest] = useState('Painel BI');
+  const [showModal, setShowModal] = useState(false);
+  const [lastScan, setLastScan] = useState(null);
+  const [isFrontCamera, setIsFrontCamera] = useState(false); // Estado para controlar a câmera
 
   // Função para enviar log para o servidor
   const sendLogToServer = logData => {
@@ -18,74 +19,74 @@ function App() {
       },
       body: JSON.stringify(logData)
     })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Erro na resposta do servidor')
-        }
-        return response.text()
-      })
+      .then(response => response.text())
       .then(data => {
-        console.log('Log enviado:', data) // Exibe a resposta do servidor
+        console.log(data); // Exibe a resposta do servidor
       })
       .catch(error => {
-        console.error('Erro ao enviar o log para o servidor:', error)
-      })
-  }
+        console.error('Erro ao enviar o log para o servidor:', error);
+      });
+  };
 
   // Função de escaneamento para capturar o QR code
   const handleScan = useCallback(
     result => {
       if (result && result.text) {
-        const scannedText = result.text
+        const scannedText = result.text;
 
         // Evita leituras repetidas dentro de 3 segundos
-        if (lastScan && new Date() - lastScan < 3000) return
+        if (lastScan && new Date() - lastScan < 3000) return;
 
-        setLastScan(new Date())
+        setLastScan(new Date());
 
         const newQrData = {
           data: scannedText,
           timestamp: new Date().toISOString(),
           interest: selectedInterest
-        }
+        };
 
-        setQrData(prevData => [...prevData, newQrData])
+        setQrData(prevData => [...prevData, newQrData]);
 
         // Exibir modal
-        setShowModal(true)
+        setShowModal(true);
 
         // Fecha o modal automaticamente após 3 segundos
         setTimeout(() => {
-          setShowModal(false)
-        }, 3000)
+          setShowModal(false);
+        }, 3000);
 
         // Enviar log para o servidor
-        sendLogToServer(newQrData)
+        sendLogToServer(newQrData);
       }
     },
     [selectedInterest, lastScan]
-  )
+  );
 
   const handleError = err => {
-    console.error(err)
-  }
+    console.error(err);
+  };
 
   const handleInterestChange = event => {
-    setSelectedInterest(event.target.value)
-  }
+    setSelectedInterest(event.target.value);
+  };
 
   // Função para download CSV
   const downloadCSV = () => {
-    const csv = Papa.unparse(qrData)
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.setAttribute('href', url)
-    link.setAttribute('download', 'qr_codes.csv')
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  }
+    const csv = Papa.unparse(qrData);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'qr_codes.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Função para alternar entre a câmera frontal e traseira
+  const toggleCamera = () => {
+    setIsFrontCamera(prevState => !prevState);
+  };
 
   return (
     <div className="app-container">
@@ -111,6 +112,7 @@ function App() {
           onError={handleError}
           onScan={handleScan}
           className="qr-scanner"
+          facingMode={isFrontCamera ? 'user' : 'environment'} // Muda a câmera aqui
         />
       </div>
 
@@ -121,6 +123,10 @@ function App() {
           </div>
         </div>
       )}
+
+      <button className="toggle-camera-btn" onClick={toggleCamera}>
+        Mudar para {isFrontCamera ? 'traseira' : 'frontal'} câmera
+      </button>
 
       <button className="download-btn" onClick={downloadCSV}>
         Download CSV
@@ -155,7 +161,7 @@ function App() {
 
         .qr-scanner-container {
           width: 100%;
-          max-width: 300px;
+          max-width: 500px;
           margin-bottom: 20px;
         }
 
@@ -182,6 +188,7 @@ function App() {
           text-align: center;
         }
 
+        .toggle-camera-btn,
         .download-btn {
           margin-top: 20px;
           padding: 10px;
@@ -201,6 +208,7 @@ function App() {
             max-width: 350px;
           }
 
+          .toggle-camera-btn,
           .download-btn {
             width: 80%;
           }
@@ -216,13 +224,14 @@ function App() {
             max-width: 300px;
           }
 
+          .toggle-camera-btn,
           .download-btn {
             width: 90%;
           }
         }
       `}</style>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
