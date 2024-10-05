@@ -1,112 +1,113 @@
-import React, { useState, useCallback } from 'react';
-import QrScanner from 'react-qr-scanner';
-import Papa from 'papaparse';
-import LogonLogo from '../src/LogonLogo.png';
-import { FaCamera } from 'react-icons/fa'; // Ícone de câmera
-import { collection, addDoc } from 'firebase/firestore';
-import { db, saveData } from './firebase'; // ajuste o caminho conforme necessário
+import React, { useState, useCallback } from 'react'
+import QrScanner from 'react-qr-scanner'
+import LogonLogo from '../src/LogonLogo.png'
+import { FaCamera } from 'react-icons/fa' // Ícone de câmera
+import { saveData } from './firebase' // Função para salvar os dados no Firebase
 
 function App() {
-  const [qrData, setQrData] = useState([]);
-  const [selectedInterest, setSelectedInterest] = useState('Painel BI');
-  const [showModal, setShowModal] = useState(false);
-  const [lastScan, setLastScan] = useState(null);
-  const [isFrontCamera, setIsFrontCamera] = useState(false); // Estado para câmera frontal/traseira
+  // Estado para controlar o interesse selecionado no dropdown
+  const [selectedInterest, setSelectedInterest] = useState('Painel BI')
 
-  // Função para alternar a câmera
+  // Estado para controlar a exibição do modal de "Concluído"
+  const [showModal, setShowModal] = useState(false)
+
+  // Estado para guardar o último QR code escaneado e evitar escaneamentos repetidos
+  const [lastScan, setLastScan] = useState(null)
+
+  // Estado para alternar entre a câmera frontal e traseira
+  const [isFrontCamera, setIsFrontCamera] = useState(false)
+
+  // Função para alternar entre a câmera frontal e traseira
   const toggleCamera = () => {
-    setIsFrontCamera(prevState => !prevState);
-  };
+    setIsFrontCamera(prevState => !prevState)
+  }
 
-  // Função para enviar log para o Firebase
+  // Função para enviar os logs para o Firebase
   const sendLogToServer = async logData => {
     try {
-      await saveData(logData.data, logData.interest);
-      console.log('Log salvo no Firebase com sucesso!');
+      await saveData(logData.data, logData.interest) // Salva os dados no Firebase
+      console.log('Log salvo no Firebase com sucesso!')
     } catch (error) {
-      console.error('Erro ao salvar o log no Firebase:', error);
+      console.error('Erro ao salvar o log no Firebase:', error)
     }
-  };
+  }
 
-  // Função de escaneamento para capturar o QR code
+  // Função que lida com o escaneamento do QR code
   const handleScan = useCallback(
     result => {
       if (result && result.text) {
-        const scannedText = result.text;
+        const scannedText = result.text
 
-        // Evita leituras repetidas dentro de 3 segundos
-        if (lastScan && new Date() - lastScan < 3000) return;
+        // Verifica se o QR code já foi lido nos últimos 3 segundos
+        if (lastScan && new Date() - lastScan < 3000) return
 
-        setLastScan(new Date());
+        // Atualiza o estado com o timestamp da última leitura
+        setLastScan(new Date())
 
+        // Cria um objeto com os dados do QR code escaneado
         const newQrData = {
           data: scannedText,
           timestamp: new Date().toISOString(),
-          interest: selectedInterest,
-        };
+          interest: selectedInterest
+        }
 
-        setQrData(prevData => [...prevData, newQrData]);
-
-        // Exibir modal
-        setShowModal(true);
+        // Exibe o modal de "Concluído"
+        setShowModal(true)
 
         // Fecha o modal automaticamente após 3 segundos
         setTimeout(() => {
-          setShowModal(false);
-        }, 3000);
+          setShowModal(false)
+        }, 3000)
 
-        // Enviar log para o servidor (Firebase)
-        sendLogToServer(newQrData);
+        // Envia os logs para o servidor (Firebase)
+        sendLogToServer(newQrData)
       }
     },
     [selectedInterest, lastScan]
-  );
+  )
 
+  // Função que lida com erros durante o escaneamento
   const handleError = err => {
-    console.error(err);
-  };
+    console.error(err)
+  }
 
+  // Função que atualiza o interesse selecionado no dropdown
   const handleInterestChange = event => {
-    setSelectedInterest(event.target.value);
-  };
+    setSelectedInterest(event.target.value)
+  }
 
-  // Função para download CSV
-  const downloadCSV = () => {
-    const csv = Papa.unparse(qrData);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'qr_codes.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  // Configurações de câmera
+  // Estilos de visualização para o scanner de QR code
   const previewStyle = {
     height: 240,
-    width: 320,
-  };
+    width: 320
+  }
 
+  // Restrições de câmera para alternar entre a frontal e traseira
   const cameraConstraints = {
-    facingMode: isFrontCamera ? 'user' : 'environment', // Troca entre câmera frontal e traseira
-  };
+    facingMode: isFrontCamera ? 'user' : 'environment' // 'user' para câmera frontal, 'environment' para traseira
+  }
 
   return (
     <div className="app-container">
+      {/* Container para o logo */}
       <div className="logo-container">
         <img src={LogonLogo} alt="Logo" />
       </div>
 
+      {/* Dropdown para selecionar o interesse */}
       <div className="dropdown-container">
-        <select value={selectedInterest} onChange={handleInterestChange} className="dropdown">
+        <select
+          value={selectedInterest}
+          onChange={handleInterestChange}
+          className="dropdown"
+        >
           <option value="Painel BI">Painel BI</option>
           <option value="Automação">Automação</option>
           <option value="Outros">Outros</option>
         </select>
       </div>
 
+      {/* Componente para o scanner de QR code */}
       <div className="qr-scanner-container">
         <QrScanner
           delay={300}
@@ -117,6 +118,7 @@ function App() {
         />
       </div>
 
+      {/* Modal que aparece ao concluir a leitura do QR code */}
       {showModal && (
         <div className="modal">
           <div className="modal-content">
@@ -125,16 +127,14 @@ function App() {
         </div>
       )}
 
+      {/* Botão para alternar entre a câmera frontal e traseira */}
       <div className="controls-container">
         <button className="camera-toggle" onClick={toggleCamera}>
           <FaCamera size={24} />
         </button>
       </div>
 
-      <button className="download-btn" onClick={downloadCSV}>
-        Download CSV
-      </button>
-
+      {/* Estilos em CSS */}
       <style jsx>{`
         .app-container {
           text-align: center;
@@ -144,6 +144,7 @@ function App() {
           flex-direction: column;
           justify-content: center;
           align-items: center;
+          padding: 20px;
         }
 
         .logo-container {
@@ -152,14 +153,18 @@ function App() {
 
         .dropdown-container {
           margin-bottom: 20px;
+          width: 100%;
+          max-width: 300px;
         }
 
         .dropdown {
           padding: 10px;
+          width: 100%;
           border-radius: 5px;
           border: none;
           background-color: #ff6500;
           color: #1e3e62;
+          font-size: 16px;
         }
 
         .qr-scanner-container {
@@ -169,12 +174,9 @@ function App() {
         }
 
         .controls-container {
-          position: relative;
-          width: 100%;
           display: flex;
           justify-content: center;
-          padding-left: 200px;
-          margin: -20px;
+          margin-top: 10px;
         }
 
         .camera-toggle {
@@ -203,47 +205,41 @@ function App() {
           text-align: center;
         }
 
-        .download-btn {
-          margin-top: 20px;
-          padding: 10px;
-          background-color: #ff6500;
-          color: #fff;
-          border-radius: 5px;
-          border: none;
-        }
-
         @media (max-width: 768px) {
           .dropdown {
             width: 80%;
+            font-size: 14px;
           }
 
           .qr-scanner-container {
-            width: 100%;
             max-width: 350px;
-          }
-
-          .download-btn {
-            width: 80%;
           }
         }
 
         @media (max-width: 480px) {
           .dropdown {
             width: 90%;
+            font-size: 14px;
           }
 
           .qr-scanner-container {
-            width: 100%;
             max-width: 300px;
           }
+        }
 
-          .download-btn {
-            width: 90%;
+        @media (max-width: 428px) {
+          .dropdown {
+            width: 100%;
+            font-size: 12px;
+          }
+
+          .qr-scanner-container {
+            max-width: 280px;
           }
         }
       `}</style>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
