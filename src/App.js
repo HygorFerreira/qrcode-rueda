@@ -145,6 +145,10 @@ function App() {
           justify-content: center;
           align-items: center;
           padding: 20px;
+          width: 100%; /* Garante que ocupe 100% da largura */
+          max-width: 100vw; /* Evita margem branca */
+          overflow-x: hidden; /* Remove rolagem horizontal */
+          box-sizing: border-box; /* Garante que padding seja incluído nas dimensões */
         }
 
         .logo-container {
