@@ -145,14 +145,24 @@ function App() {
           justify-content: center;
           align-items: center;
           padding: 20px;
-          width: 100%; /* Garante que ocupe 100% da largura */
-          max-width: 100vw; /* Evita margem branca */
-          overflow-x: hidden; /* Remove rolagem horizontal */
-          box-sizing: border-box; /* Garante que padding seja incluído nas dimensões */
+          width: 100%;
+          max-width: 100vw;
+          overflow-x: hidden;
+          box-sizing: border-box;
         }
 
         .logo-container {
           margin-bottom: 20px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+          max-width: 300px; /* Ajusta o tamanho máximo do logo */
+        }
+
+        .logo-container img {
+          width: 100%;
+          height: auto;
         }
 
         .dropdown-container {
@@ -175,6 +185,14 @@ function App() {
           width: 100%;
           max-width: 500px;
           margin-bottom: 20px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .qr-scanner-container canvas {
+          width: 100% !important; /* Garante que o scanner ocupe toda a largura do container */
+          height: auto !important; /* Ajusta a altura proporcionalmente */
         }
 
         .controls-container {
@@ -218,6 +236,10 @@ function App() {
           .qr-scanner-container {
             max-width: 350px;
           }
+
+          .logo-container {
+            max-width: 250px; /* Ajusta o tamanho do logo para telas menores */
+          }
         }
 
         @media (max-width: 480px) {
@@ -229,6 +251,10 @@ function App() {
           .qr-scanner-container {
             max-width: 300px;
           }
+
+          .logo-container {
+            max-width: 200px; /* Ajusta ainda mais o logo no mobile */
+          }
         }
 
         @media (max-width: 428px) {
@@ -239,6 +265,10 @@ function App() {
 
           .qr-scanner-container {
             max-width: 280px;
+          }
+
+          .logo-container {
+            max-width: 180px; /* Ajusta o logo para o menor tamanho de tela */
           }
         }
       `}</style>
