@@ -249,11 +249,11 @@ function App() {
           }
 
           .qr-scanner-container {
-            max-width: 300px;
+            max-width: 400px;
           }
 
           .logo-container {
-            max-width: 200px; /* Ajusta ainda mais o logo no mobile */
+            max-width: 300px; /* Ajusta ainda mais o logo no mobile */
           }
         }
 
@@ -264,11 +264,11 @@ function App() {
           }
 
           .qr-scanner-container {
-            max-width: 280px;
+            max-width: 320px;
           }
 
           .logo-container {
-            max-width: 180px; /* Ajusta o logo para o menor tamanho de tela */
+            max-width: 220px; /* Ajusta o logo para o menor tamanho de tela */
           }
         }
       `}</style>
