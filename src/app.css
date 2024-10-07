@@ -1,0 +1,135 @@
+.app-container {
+  text-align: center;
+  background-color: #1e3e62;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.logo-container {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 300px; /* Ajusta o tamanho máximo do logo */
+}
+
+.logo-container img {
+  width: 100%;
+  height: auto;
+}
+
+.dropdown-container {
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.dropdown {
+  padding: 10px;
+  width: 100%;
+  border-radius: 5px;
+  border: none;
+  background-color: #ff6500;
+  color: #1e3e62;
+  font-size: 16px;
+}
+
+.qr-scanner-container {
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.qr-scanner-container canvas {
+  width: 100% !important; /* Garante que o scanner ocupe toda a largura do container */
+  height: auto !important; /* Ajusta a altura proporcionalmente */
+}
+
+.controls-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.camera-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: white;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .dropdown {
+    width: 80%;
+    font-size: 14px;
+  }
+
+  .qr-scanner-container {
+    max-width: 350px;
+  }
+
+  .logo-container {
+    max-width: 250px; /* Ajusta o tamanho do logo para telas menores */
+  }
+}
+
+@media (max-width: 480px) {
+  .dropdown {
+    width: 90%;
+    font-size: 14px;
+  }
+
+  .qr-scanner-container {
+    max-width: 400px;
+  }
+
+  .logo-container {
+    max-width: 300px; /* Ajusta ainda mais o logo no mobile */
+  }
+}
+
+@media (max-width: 428px) {
+  .dropdown {
+    width: 100%;
+    font-size: 12px;
+  }
+
+  .qr-scanner-container {
+    max-width: 320px;
+  }
+
+  .logo-container {
+    max-width: 220px; /* Ajusta o logo para o menor tamanho de tela */
+  }
+}
